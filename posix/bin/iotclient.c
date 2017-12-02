@@ -78,8 +78,9 @@ int main(int argc, char** argv) {
 	// Define Variables
     iotcs_result rv;
 	int i = 0;
-	int result;
-	float humidity, temperature;
+	int result = -1;
+	float humidity = 0;
+	float temperature = 0;
 
 	
 	fprintf(stderr,"iotcs: device starting!\n");
@@ -121,75 +122,32 @@ int main(int argc, char** argv) {
         return IOTCS_RESULT_FAIL;
     }
  
-
-	/* Main loop - Read the sensor and send messages to IOT */
-	while(i++ < 5)
-	{
-		int ix=0;
-		time_t mytime;
-		humidity = 0; 
-		temperature = 0;
-		result = -1;
-		
-		// Read from the sensor
-			fprintf(stderr,"iotcs: Reading from the DHT%u sensor!\n", sensor_type);
-			result = pi_2_dht_read(sensor_type, gpio_pin, &humidity, &temperature);
-			if (result != DHT_SUCCESS) {
-				fprintf(stderr,"iotcs: Warning, Bad data from the DHT%u sensor\n", sensor_type);
-			}
-		}
-
-		// Only report successful sensor readings
-		if (result == DHT_SUCCESS) {
-		
-			mytime = time(NULL);
-			printf(ctime(&mytime));
-			
-			// PK: print what we report to IOT
-			fprintf(stderr,"\n<*******************************************************************>\n");
-			fprintf(stderr, ctime(&mytime));
-			fprintf(stderr,"iotcs: result = %u, humidity = %2.2f, temperature= %2.2f\n", result, humidity, temperature);
-			fprintf(stderr,"<*******************************************************************>\n\n");
-			
-			// PK: Start setting attribute for IOT
-			iotcs_virtual_device_start_update(device_handle);
-			
-			// PK: Set attribute
-			rv = iotcs_virtual_device_set_float(device_handle, "temperature", temperature);
-			if (rv != IOTCS_RESULT_OK) {
-				fprintf(stderr,"iotcs_virtual_device_set_float method 1 failed\n");
-				return IOTCS_RESULT_FAIL;
-			}
-
-			// PK: Set attribute
-			rv = iotcs_virtual_device_set_float(device_handle, "humidity", humidity);
-			if (rv != IOTCS_RESULT_OK) {
-				fprintf(stderr,"iotcs_virtual_device_set_float method 2 failed\n");
-				return IOTCS_RESULT_FAIL;
-			}
-			
-			// PK: We are done. Send message to IOT
-			iotcs_virtual_device_finish_update(device_handle);		
-
-		}
-		
-		// PK: How long to sleep before next sensor reading
-		if (argc > 3) {
-			if (strcmp (ts_startmode, "test") == 0) {
-				// Startmode = test mode
-				fprintf(stderr,"iotcs: Sleeping %u secs, startmode=test\n", read_interval_testing);
-				sleep(read_interval_testing);
-			} else {
-				// Startmode = production mode
-				fprintf(stderr,"iotcs: Sleeping %u secs, startmode=prod\n", read_interval);
-				sleep(read_interval);
-			}
-		} else {
-			// Startmode = production mode
-			fprintf(stderr,"iotcs: Sleeping %u secs, startmode=prod\n", read_interval);
-			sleep(read_interval);
-		}
+	// Read values from the sensor.
+	fprintf(stderr,"iotcs: Reading from the DHT%u sensor!\n", sensor_type);
+	result = pi_2_dht_read(sensor_type, gpio_pin, &humidity, &temperature);
+	if (result != DHT_SUCCESS) {
+		fprintf(stderr,"iotcs: Warning, Bad data from the DHT%u sensor\n", sensor_type);
 	}
+
+	// Start setting attribute for IOT
+	iotcs_virtual_device_start_update(device_handle);
+	
+	// Set attribute
+	rv = iotcs_virtual_device_set_float(device_handle, "temperature", temperature);
+	if (rv != IOTCS_RESULT_OK) {
+		fprintf(stderr,"iotcs_virtual_device_set_float 1 failed\n");
+		return IOTCS_RESULT_FAIL;
+	}
+
+	// Set attribute
+	rv = iotcs_virtual_device_set_float(device_handle, "humidity", humidity);
+	if (rv != IOTCS_RESULT_OK) {
+		fprintf(stderr,"iotcs_virtual_device_set_float 2 failed\n");
+		return IOTCS_RESULT_FAIL;
+	}
+	
+	// We are done. IOT can sync the virtual device
+	iotcs_virtual_device_finish_update(device_handle);		
  
     /* free device handle */
     iotcs_free_virtual_device_handle(device_handle);
@@ -201,6 +159,5 @@ int main(int argc, char** argv) {
      * previously allocated temporary resources are released.
      */
     iotcs_finalize();
-    printf("OK\n");
     return EXIT_SUCCESS;
 }
