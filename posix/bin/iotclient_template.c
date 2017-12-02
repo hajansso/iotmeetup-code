@@ -13,7 +13,7 @@
  *********************************************************************************************** 
  * 
  * In this tutorial we are using stderr for output to make it easy to distiguish it
- * from the output from the IoT Client Library
+ * from the output to stdout from the IoT Client Library
  * 
  * /Peter Karlsson, Oracle Presales
  * 
@@ -48,22 +48,22 @@ static void error(const char* message) {
 }
 
 /*
-** Main
+** Define Variables
 */
+// Set sensor type DHT11=11, DHT22=22, GPIO pin=4
+const int sensor_type = 22;
+const int gpio_pin = 4;
+
+
+/************************************************************************************************
+** Main
+************************************************************************************************/
 int main(int argc, char** argv) {
     /* This is the URN of your device model. */
     const char* device_urns[] = {
         "urn:com:oracle:demo:esensor",
         NULL
     };
-	
-	/*
-	** Define Variables
-	*/
-    iotcs_result rv;
-	// Set sensor type DHT11=11, DHT22=22, GPIO pin=4
-	const int sensor_type = 22;
-	const int gpio_pin = 4;
 	
     if (argc < 3) {
         error("Too few parameters.\n"
@@ -75,9 +75,16 @@ int main(int argc, char** argv) {
     const char* ts_path = argv[1];
     const char* ts_password = argv[2];
 
+	// Define Variables
+    iotcs_result rv;
+	int i = 0;
+	int result;
+	float humidity, temperature;
+
+	
 	fprintf(stderr,"iotcs: device starting!\n");
-	fprintf(stderr,"iotcs: Loading configuration from: %s\n" ,ts_path);
-  
+	fprintf(stderr,"iotcs: Loading configuration from: %s\n", ts_path);
+
     /*
      * Initialize the library before any other calls.
      * Initiate all subsystems like ssl, TAM, request dispatcher,
@@ -114,22 +121,17 @@ int main(int argc, char** argv) {
         return IOTCS_RESULT_FAIL;
     }
  
-	/* Init vars for main loop */
-	int i = 0;
-	int result;
-	float humidity, temperature;
 
-    /* Main loop - Read the sensor and send messages to IOT */
+	/* Main loop - Read the sensor and send messages to IOT */
 	while(i++ < 5)
 	{
 		int ix=0;
 		time_t mytime;
-
 		humidity = 0; 
 		temperature = 0;
 		result = -1;
 		
-		// PK: Read values from the sensor. Retry on bad data
+		// Read values from the sensor. Retry on bad data
 		while ((result != DHT_SUCCESS) && (ix < retries)) {
 			fprintf(stderr,"iotcs: Reading from the DHT%u sensor!\n", sensor_type);
 			result = pi_2_dht_read(sensor_type, gpio_pin, &humidity, &temperature);
