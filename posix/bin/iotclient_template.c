@@ -128,7 +128,7 @@ int main(int argc, char** argv) {
 	if (result != DHT_SUCCESS) {
 		fprintf(stderr,"iotcs: Warning, Bad data from the DHT%u sensor\n", sensor_type);
 	}
-	fprintf(stderr,"iotcs: Temperature = %u, Humidity = %u \n", temperature, humidity);
+	fprintf(stderr,"iotcs: temperature = %2.2f, humidity= %2.2f\n", temperature, humidity);
 
 	// Start setting attribute for IOT
 	iotcs_virtual_device_start_update(device_handle);
