@@ -14,11 +14,9 @@
  * 
  * In this tutorial we are using stderr for output to make it easy to distiguish it
  * from the output to stdout from the IoT Client Library
+ * When running the code do "sh run_iotclient.sh 1> log" to only see the output from your app
  * 
  * /Peter Karlsson, Oracle Presales
- * 
- * 
- * 
  * 
  */
  
@@ -48,12 +46,14 @@ static void error(const char* message) {
 }
 
 /*
-** Define Variables
+** Define const Variables
 */
-// Set sensor type DHT11=11, DHT22=22, GPIO pin=4
+// Set sensor type DHT11=11, DHT22=22
 const int sensor_type = 22;
+// The sensor is on GPIO pin=4
 const int gpio_pin = 4;
-
+// This is the URN of your device model
+const char* myDeviceUrn = "urn:com:oracle:demo:esensor";
 
 /************************************************************************************************
 ** Main
@@ -83,7 +83,8 @@ int main(int argc, char** argv) {
 	float temperature = 0;
 
 	
-	fprintf(stderr,"iotcs: device starting!\n");
+	fprintf(stderr,"iotcs: iotclient starting!\n");
+	fprintf(stderr,"iotcs: myDeviceUrn: %s\n", myDeviceUrn);
 	fprintf(stderr,"iotcs: Loading configuration from: %s\n", ts_path);
 
     /*

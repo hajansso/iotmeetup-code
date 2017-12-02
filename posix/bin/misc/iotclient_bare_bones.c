@@ -18,6 +18,9 @@
  * 
  * /Peter Karlsson, Oracle Presales
  * 
+ * 
+ * 
+ * 
  */
  
 #include <stdio.h>
@@ -46,14 +49,12 @@ static void error(const char* message) {
 }
 
 /*
-** Define const Variables
+** Define Variables
 */
-// Set sensor type DHT11=11, DHT22=22
+// Set sensor type DHT11=11, DHT22=22, GPIO pin=4
 const int sensor_type = 22;
-// The sensor is on GPIO pin=4
 const int gpio_pin = 4;
-// This is the URN of your device model
-const char* myDeviceUrn = "urn:com:oracle:demo:esensor";
+
 
 /************************************************************************************************
 ** Main
@@ -83,8 +84,7 @@ int main(int argc, char** argv) {
 	float temperature = 0;
 
 	
-	fprintf(stderr,"iotcs: iotclient starting!\n");
-	fprintf(stderr,"iotcs: myDeviceUrn: %s\n", myDeviceUrn);
+	fprintf(stderr,"iotcs: device starting!\n");
 	fprintf(stderr,"iotcs: Loading configuration from: %s\n", ts_path);
 
     /*
