@@ -131,21 +131,11 @@ int main(int argc, char** argv) {
 		temperature = 0;
 		result = -1;
 		
-		// Read values from the sensor. Retry on bad data
-		while ((result != DHT_SUCCESS) && (ix < retries)) {
+		// Read from the sensor
 			fprintf(stderr,"iotcs: Reading from the DHT%u sensor!\n", sensor_type);
 			result = pi_2_dht_read(sensor_type, gpio_pin, &humidity, &temperature);
 			if (result != DHT_SUCCESS) {
-				fprintf(stderr,"iotcs: Warning, Bad data from the DHT%u sensor, trying again %u/%u times.\n", sensor_type, ix+1, retries);
-
-				ix++;
-
-				if (ix == retries) {
-					fprintf(stderr,"iotcs: Warning, failed to read %u times from the DHT%u sensor, skipping to next cycle!\n", retries, sensor_type);
-				} else {
-					// wait for sensor for "retry_timer" secs	
-					sleep (retry_timer);
-				}
+				fprintf(stderr,"iotcs: Warning, Bad data from the DHT%u sensor\n", sensor_type);
 			}
 		}
 
