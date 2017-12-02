@@ -158,7 +158,7 @@ int main(int argc, char** argv) {
 				ix++;
 
 				if (ix == retries) {
-					fprintf(stderr,"iotcs: Warning, failed to read %u times from the DHT%u sensor, skipping to next cycle!\n", sensor_type);
+					fprintf(stderr,"iotcs: Warning, failed to read %u times from the DHT%u sensor, skipping to next cycle!\n", retries, sensor_type);
 				} else {
 					// wait for sensor for "retry_timer" secs	
 					sleep (retry_timer);
