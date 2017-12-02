@@ -18,9 +18,6 @@
  * 
  * /Peter Karlsson, Oracle Presales
  * 
- * 
- * 
- * 
  */
  
 #include <stdio.h>
@@ -49,12 +46,12 @@ static void error(const char* message) {
 }
 
 /*
-** Define Variables
+** Define const Variables
 */
-// Set sensor type DHT11=11, DHT22=22, GPIO pin=4
+// Set sensor type DHT11=11, DHT22=22
 const int sensor_type = 22;
+// The sensor is on GPIO pin=4
 const int gpio_pin = 4;
-
 
 /************************************************************************************************
 ** Main
@@ -84,7 +81,8 @@ int main(int argc, char** argv) {
 	float temperature = 0;
 
 	
-	fprintf(stderr,"iotcs: device starting!\n");
+	fprintf(stderr,"iotcs: iotclient starting!\n");
+	fprintf(stderr,"iotcs: Device Urn: %s\n", device_urns[0]);
 	fprintf(stderr,"iotcs: Loading configuration from: %s\n", ts_path);
 
     /*
