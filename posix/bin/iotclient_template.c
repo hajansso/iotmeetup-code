@@ -52,8 +52,6 @@ static void error(const char* message) {
 const int sensor_type = 22;
 // The sensor is on GPIO pin=4
 const int gpio_pin = 4;
-// This is the URN of your device model
-const char* myDeviceUrn = "urn:com:oracle:demo:esensor";
 
 /************************************************************************************************
 ** Main
@@ -84,7 +82,7 @@ int main(int argc, char** argv) {
 
 	
 	fprintf(stderr,"iotcs: iotclient starting!\n");
-	fprintf(stderr,"iotcs: myDeviceUrn: %s\n", myDeviceUrn);
+	fprintf(stderr,"iotcs: Device Urn: %s\n", device_urns[0]);
 	fprintf(stderr,"iotcs: Loading configuration from: %s\n", ts_path);
 
     /*
