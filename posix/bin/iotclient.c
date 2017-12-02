@@ -39,6 +39,12 @@ static void error(const char* message) {
     fprintf(stderr,"iotcs: Error occurred: %s\n", message);
     exit(EXIT_FAILURE);
 }
+
+/* Set the Action callback */
+static void action_callback() {
+    fprintf(stderr,"iotcs: ACTION CALLBACK\n");
+}
+
  
 int main(int argc, char** argv) {
     /* This is the URN of your device model. */
@@ -122,15 +128,22 @@ int main(int argc, char** argv) {
  
     /* get device model handle */
     if (iotcs_get_device_model_handle(device_urns[0], &device_model_handle) != IOTCS_RESULT_OK) {
-        fprintf(stderr,"iotcs_get_device_model_handle method failed\n");
+        error("iotcs_get_device_model_handle method failed\n");
         return IOTCS_RESULT_FAIL;
     }
  
     /* get device handle */
     if (iotcs_get_virtual_device_handle(iotcs_get_endpoint_id(), device_model_handle, &device_handle) != IOTCS_RESULT_OK) {
-        fprintf(stderr,"iotcs_get_device_handle method failed\n");
+        error("iotcs_get_device_handle method failed\n");
         return IOTCS_RESULT_FAIL;
     }
+ 
+	// set a callback for action
+	if (iotcs_virtual_device_set_callback(device_handle, action_name, action_callback) != IOTCS_RESULT_OK) {
+        error("iotcs_virtual_device_set_callback method failed\n");
+        return IOTCS_RESULT_FAIL;
+    } 
+	 
  
 	/* Init vars for main loop */
 	int i = 0;
