@@ -75,7 +75,7 @@ int main(int argc, char** argv) {
     }
 
 	// Define Variables
-    iotcs_result rv;
+  iotcs_result rv;
 	int i = 0;
 	int result = -1;
 	float humidity = 0;
