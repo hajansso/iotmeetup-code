@@ -41,8 +41,8 @@ static iotcs_virtual_device_handle device_handle = NULL;
 
 /* print error message and terminate the program execution */
 static void error(const char* message) {
-    fprintf(stderr,"iotcs: Error occurred: %s\n", message);
-    exit(EXIT_FAILURE);
+  fprintf(stderr,"iotcs: Error occurred: %s\n", message);
+  exit(EXIT_FAILURE);
 }
 
 /*
@@ -54,8 +54,8 @@ const int sensor_type = 22;
 const int gpio_pin = 4;
 // This is the URN of your device model
 const char* device_urns[] = {
-    "urn:com:oracle:demo:esensor",
-    NULL
+  "urn:com:oracle:demo:esensor",
+  NULL
 };
 
 
@@ -93,5 +93,5 @@ int main(int argc, char** argv) {
 *
 */
 
-    return EXIT_SUCCESS;
+  return EXIT_SUCCESS;
 }
