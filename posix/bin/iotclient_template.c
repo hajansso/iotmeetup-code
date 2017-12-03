@@ -52,16 +52,18 @@ static void error(const char* message) {
 const int sensor_type = 22;
 // The sensor is on GPIO pin=4
 const int gpio_pin = 4;
+// This is the URN of your device model
+const char* device_urns[] = {
+    "urn:com:oracle:demo:esensor",
+    NULL
+};
 
 /************************************************************************************************
 ** Main
 ************************************************************************************************/
 int main(int argc, char** argv) {
-    /* This is the URN of your device model. */
-    const char* device_urns[] = {
-        "urn:com:oracle:demo:esensor",
-        NULL
-    };
+  const char* ts_path = argv[1];
+  const char* ts_password = argv[2];
 
     if (argc < 3) {
         error("Too few parameters.\n"
@@ -70,8 +72,6 @@ int main(int argc, char** argv) {
                 "\n\tpath is a path to trusted assets store."
                 "\n\tpassword is a password for trusted assets store.");
     }
-    const char* ts_path = argv[1];
-    const char* ts_password = argv[2];
 
 	// Define Variables
     iotcs_result rv;
