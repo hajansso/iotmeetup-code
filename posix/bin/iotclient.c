@@ -120,6 +120,9 @@ int main(int argc, char** argv) {
     return IOTCS_RESULT_FAIL;
   }
 
+  /* Main loop - Read the sensor and send the attributes to IOT */
+  while(1) {
+
 	// Read values from the sensor.
 	fprintf(stderr,"iotcs: Reading from the DHT%u sensor!\n", sensor_type);
 	result = pi_2_dht_read(sensor_type, gpio_pin, &humidity, &temperature);
@@ -147,6 +150,9 @@ int main(int argc, char** argv) {
 
 	// We are done. IOT can sync the virtual device
 	iotcs_virtual_device_finish_update(device_handle);
+  // Sleep 10 secs
+  sleep(10);
+  }
 
   /* free device handle */
   iotcs_free_virtual_device_handle(device_handle);
