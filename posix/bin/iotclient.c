@@ -150,8 +150,8 @@ int main(int argc, char** argv) {
 
 	// We are done. IOT can sync the virtual device
 	iotcs_virtual_device_finish_update(device_handle);
-  // Sleep 10 secs
-  sleep(10);
+  // Sleep 20 secs
+  sleep(20);
   }
 
   /* free device handle */
