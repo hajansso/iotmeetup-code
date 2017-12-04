@@ -1,5 +1,5 @@
 /*
- * An example of a gateway device which is capable of communicating
+ * An example of a directly connected device which is capable of communicating
  * directly with Oracle IoT Cloud Service. This sample illustrates 
  * C code for sending data to the cloud service and does not fully explore the Client Library API.
  *
@@ -9,17 +9,6 @@
  * attributes, actions, and message formats that can be represented in
  * a real device. For this example the "Hello World" device model is used.
  * This device model must be uploaded to the server before running this example.
- * 
- *********************************************************************************************** 
- * 
- * In this tutorial we are using stderr for output to make it easy to distiguish it
- * from the output from the IoT Client Library
- * 
- * /Peter Karlsson, Oracle Presales
- * 
- * 
- * 
- * 
  */
  
 #include <stdio.h>
@@ -36,8 +25,12 @@
 /* include methods for device client*/
 #include "iotcs_device.h"
  
+/* Current device value */
+static const char* device_current_value;
+
 /* Device model handle */
 static iotcs_device_model_handle device_model_handle = NULL;
+
 /* Device handle */
 static iotcs_virtual_device_handle device_handle = NULL;
  
@@ -46,10 +39,7 @@ static void error(const char* message) {
     fprintf(stderr,"iotcs: Error occurred: %s\n", message);
     exit(EXIT_FAILURE);
 }
-
-/*
-** Main
-*/
+ 
 int main(int argc, char** argv) {
     /* This is the URN of your device model. */
     const char* device_urns[] = {
@@ -64,20 +54,48 @@ int main(int argc, char** argv) {
 	// Set sensor type DHT11=11, DHT22=22, GPIO pin=4
 	const int sensor_type = 22;
 	const int gpio_pin = 4;
+	// Startup delay to allow network to initialize
+	const int startup_delay=30;
+	// Number of retries when the sensor gives bad data
+	const int retries=3;
+	// Time (secs) before trying to read the sensor again
+	const int retry_timer = 10;
+	// Read interval in secs
+	const int read_interval = 300;
+	const int read_interval_testing = 10; // For testing
+	
 	
     if (argc < 3) {
         error("Too few parameters.\n"
                 "\nUsage:"
-                "\n\tiotclient.out path password"
+                "\n\tdirectly_connected_device.out path password"
                 "\n\tpath is a path to trusted assets store."
                 "\n\tpassword is a password for trusted assets store.");
     }
     const char* ts_path = argv[1];
     const char* ts_password = argv[2];
+    const char* ts_startmode = argv[3];
 
 	fprintf(stderr,"iotcs: device starting!\n");
 	fprintf(stderr,"iotcs: Loading configuration from: %s\n" ,ts_path);
   
+	/*
+	 * PK: During prod startup wait startup_delay secs for all services to startup before trying to init IOT
+	*/
+	if (argc > 3) {
+		if (strcmp (ts_startmode, "test") == 0) {
+			fprintf(stderr,"iotcs: startmode=test\n");
+		} else {
+			// Wait for network services to start
+			fprintf(stderr,"iotcs: Wait for network services to start\n");
+			sleep(startup_delay);
+		}
+	} else {
+		// Wait for network services to start
+		fprintf(stderr,"iotcs: Wait for network services to start\n");
+		sleep(startup_delay);
+	}
+
     /*
      * Initialize the library before any other calls.
      * Initiate all subsystems like ssl, TAM, request dispatcher,
@@ -119,8 +137,9 @@ int main(int argc, char** argv) {
 	int result;
 	float humidity, temperature;
 
-    /* Main loop - Read the sensor and send messages to IOT */
-	while(i++ < 5)
+//	for (i; i<1; i++) //For debugging
+    /* Main loop - Read the sensor and send message to IOT */
+	while(1)
 	{
 		int ix=0;
 		time_t mytime;
@@ -199,6 +218,14 @@ int main(int argc, char** argv) {
 		}
 	}
  
+    /* get current device value 
+    if (iotcs_virtual_device_get_string(device_handle, "message", &device_current_value) != IOTCS_RESULT_OK) {
+        fprintf(stderr,"iotcs_virtual_device_get_string method failed\n");
+        return IOTCS_RESULT_FAIL;
+    }
+ 
+    fprintf(stderr,"Message is %s\n", device_current_value);
+ */
     /* free device handle */
     iotcs_free_virtual_device_handle(device_handle);
     /* free device model handle */
